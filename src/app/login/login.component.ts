@@ -28,7 +28,7 @@ export class LoginComponent implements OnInit {
   constructor(private form: FormBuilder) {
     this.formularioLogin = this.form.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8)]],
+      password: ['', [Validators.required, Validators.minLength(2)]],
     });
   }
 
@@ -40,18 +40,18 @@ export class LoginComponent implements OnInit {
       if (token) {
         console.log("Token rebut:", token);
         this.authService.handleGoogleCallback(token).subscribe(() => {
-          this.isLoading = false; 
-          this.exportLoggedIn.emit(true); 
+          this.isLoading = false;
+          this.exportLoggedIn.emit(true);
         });// Avisa de que l'usuari està
       }
       else{
         this.isLoading = false;
       }
-      
+
     });
     this.formularioLogin = this.form.group({
-      email: ['joan1234@example.com', [Validators.required, Validators.email]], // Valor predeterminado para el email
-      password: ['12345678', [Validators.required, Validators.minLength(8)]] // Valor predeterminado para la contraseña
+      email: ['b@gmail.com', [Validators.required, Validators.email]], // Valor predeterminado para el email
+      password: ['123456', [Validators.required, Validators.minLength(8)]] // Valor predeterminado para la contraseña
     });
   };
 
@@ -71,6 +71,9 @@ export class LoginComponent implements OnInit {
       next: (response) => {
         console.log('Login exitoso:', response);
         localStorage.setItem('access_token', response.token);
+        if(response.refreshToken){
+          localStorage.setItem('refresh_token', response.refreshToken);
+        }
         this.exportLoggedIn.emit(true);
       },
       error: (error) => {
